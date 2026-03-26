@@ -120,3 +120,20 @@ def test_set_correct_choices_and_correct_selected_choices():
     result = question.correct_selected_choices([choice1.id, choice2.id])
 
     assert result == [choice1.id]
+
+@pytest.fixture
+def question_with_multiple_choices():
+    question = Question(title='Capital cities', max_selections=2)
+    choice1 = question.add_choice('Belo Horizonte')
+    choice2 = question.add_choice('São Paulo')
+    choice3 = question.add_choice('Brasília')
+    question.set_correct_choices([choice1.id, choice3.id])
+    return question
+
+def test_correct_selected_choices_with_fixture(question_with_multiple_choices):
+    result = question_with_multiple_choices.correct_selected_choices([1, 3])
+    assert result == [1, 3]
+
+def test_correct_selected_choices_raises_when_exceeding_max_selections(question_with_multiple_choices):
+    with pytest.raises(Exception):
+        question_with_multiple_choices.correct_selected_choices([1, 2, 3])
